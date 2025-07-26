@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>THCA Store Admin Panel - Enhanced</title>
+    <link rel="stylesheet" href="enhanced-styles.css" />
+    <style>
+        /* Admin-specific styles */
+        :root {
+            --admin-primary: #00ff88;
+            --admin-secondary: #ffd700;
+            --admin-danger: #ff4757;
+            --admin-warning: #ffa502;
+            --admin-info: #3742fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0033 0%, #2d1b69 50%, #4a2b7a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--admin-primary), var(--admin-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .admin-nav button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .admin-nav button:hover,
+        .admin-nav button.active {
+            background: var(--admin-primary);
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: var(--admin-primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--admin-primary), var(--admin-secondary));
+            color: #000;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, var(--admin-danger), #ff6b7a);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .products-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .products-table th,
+        .products-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .products-table th {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--admin-primary);
+            font-weight: 700;
+        }
+
+        .products-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--admin-primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .empty-state h3 {
+            color: var(--admin-primary);
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🌿 THCA Store Admin Panel</h1>
+            <p>Manage your products, inventory, and sales</p>
+        </div>
+
+        <nav class="admin-nav">
+            <button class="nav-btn active" data-section="dashboard">📊 Dashboard</button>
+            <button class="nav-btn" data-section="products">🛍️ Products</button>
+            <button class="nav-btn" data-section="add-product">➕ Add Product</button>
+            <button class="nav-btn" data-section="sales">💰 Sales</button>
+            <button class="nav-btn" data-section="settings">⚙️ Settings</button>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+            <h2>Dashboard Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="total-products">0</span>
+                    <span class="stat-label">Total Products</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="total-sales">0</span>
+                    <span class="stat-label">Total Sales</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="total-revenue">$0</span>
+                    <span class="stat-label">Total Revenue</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="active-carts">0</span>
+                    <span class="stat-label">Active Carts</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Management Section -->
+        <section id="products" class="admin-section">
+            <h2>Product Management</h2>
+            <div class="search-bar">
+                <input type="text" id="product-search" placeholder="Search products..." />
+            </div>
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>THCA %</th>
+                        <th>Rating</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="products-table-body">
+                    <!-- Products will be populated here -->
+                </tbody>
+            </table>
+            <div class="empty-state" id="empty-products" style="display: none;">
+                <h3>No products found</h3>
+                <p>Add your first product to get started!</p>
+            </div>
+        </section>
+
+        <!-- Add/Edit Product Section -->
+        <section id="add-product" class="admin-section">
+            <h2 id="form-title">Add New Product</h2>
+            <div class="form-container">
+                <form id="product-form">
+                    <input type="hidden" id="product-id" />
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="product-name">Product Name *</label>
+                            <input type="text" id="product-name" required placeholder="e.g., Premium THCA Flower" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Category *</label>
+                            <select id="product-category" required>
+                                <option value="">Select category</option>
+                                <option value="flower">Flower</option>
+                                <option value="vape">Vape</option>
+                                <option value="edibles">Edibles</option>
+                                <option value="concentrate">Concentrate</option>
+                                <option value="prerolls">Pre-Rolls</option>
+                                <option value="tincture">Tincture</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-price">Price ($) *</label>
+                            <input type="number" id="product-price" step="0.01" min="0" required placeholder="25.00" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-thca">THCA %</label>
+                            <input type="number" id="product-thca" min="0" max="100" step="0.1" placeholder="28" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-strain">Strain Type</label>
+                            <select id="product-strain">
+                                <option value="">Select strain</option>
+                                <option value="Sativa">Sativa</option>
+                                <option value="Indica">Indica</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Sativa Hybrid">Sativa Hybrid</option>
+                                <option value="Indica Hybrid">Indica Hybrid</option>
+                                <option value="Pure THCA">Pure THCA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-rating">Rating (1-5)</label>
+                            <input type="number" id="product-rating" min="1" max="5" step="0.1" placeholder="4.8" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-reviews">Review Count</label>
+                            <input type="number" id="product-reviews" min="0" placeholder="247" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-size">Size/Quantity</label>
+                            <input type="text" id="product-size" placeholder="3.5g, 1g, 10-pack" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-image">Image URL *</label>
+                            <input type="url" id="product-image" required placeholder="https://images.unsplash.com/..." />
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="product-description">Description *</label>
+                            <textarea id="product-description" required placeholder="Detailed product description..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-effects">Effects (comma-separated)</label>
+                            <input type="text" id="product-effects" placeholder="Euphoric, Creative, Uplifted" />
+                        </div>
+                        <div class="form-group">
+                            <label for="product-terpenes">Terpenes (comma-separated)</label>
+                            <input type="text" id="product-terpenes" placeholder="Myrcene, Pinene, Caryophyllene" />
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-btn">Add Product</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-btn" style="display: none;">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="delete-btn" style="display: none;">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Sales Section -->
+        <section id="sales" class="admin-section">
+            <h2>Sales Analytics</h2>
+            <div id="sales-content">
+                <div class="empty-state">
+                    <h3>No sales data available</h3>
+                    <p>Sales will appear here when customers make purchases</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="admin-section">
+            <h2>Store Settings</h2>
+            <div class="form-container">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Store Name</label>
+                        <input type="text" id="store-name" value="THCA Store" />
+                    </div>
+                    <div class="form-group">
+                        <label>Store Email</label>
+                        <input type="email" id="store-email" value="admin@thcastore.com" />
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="store-currency">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                    <button class="btn btn-secondary" onclick="resetSettings()">Reset to Default</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Enhanced Admin Panel JavaScript
+        let products = JSON.parse(localStorage.getItem('thcaProducts')) || [];
+        let sales = JSON.parse(localStorage.getItem('thcaSales')) || [];
+        let settings = JSON.parse(localStorage.getItem('thcaSettings')) || {
+            storeName: 'THCA Store',
+            storeEmail: 'admin@thcastore.com',
+            currency: 'USD'
+        };
+
+        // DOM Elements
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.admin-section');
+        const productForm = document.getElementById('product-form');
+        const productsTableBody = document.getElementById('products-table-body');
+        const productSearch = document.getElementById('product-search');
+
+        // Navigation
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetSection = btn.dataset.section;
+                
+                // Update active nav button
+                navBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show target section
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === targetSection) {
+                        section.classList.add('active');
+                    }
+                });
+                
+                // Load section-specific data
+                if (targetSection === 'dashboard') loadDashboard();
+                if (targetSection === 'products') loadProducts();
+                if (targetSection === 'sales') loadSales();
+            });
+        });
+
+        // Product Management
+        function loadProducts() {
+            const searchTerm = productSearch.value.toLowerCase();
+            let filteredProducts = products;
+            
+            if (searchTerm) {
+                filteredProducts = products.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.category.toLowerCase().includes(searchTerm) ||
+                    p.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderProductsTable(filteredProducts);
+        }
+
+        function renderProductsTable(productsToRender = products) {
+            const tbody = productsTableBody;
+            tbody.innerHTML = '';
+            
+            if (productsToRender.length === 0) {
+                document.getElementById('empty-products').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('empty-products').style.display = 'none';
+            
+            productsToRender.forEach((product, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${product.image}" alt="${product.name}" class="product-image" /></td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td>${product.thca || 0}%</td>
+                    <td>${product.rating || 0}⭐</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editProduct(${index})" style="padding: 8px 15px; margin-right: 5px;">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteProduct(${index})" style="padding: 8px 15px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Form handling
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const product = {
+                id: parseInt(document.getElementById('product-id').value) || Date.now(),
+                name: document.getElementById('product-name').value,
+                description: document.getElementById('product-description').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                category: document.getElementById('product-category').value,
+                thca: parseFloat(document.getElementById('product-thca').value) || 0,
+                strain: document.getElementById('product-strain').value,
+                rating: parseFloat(document.getElementById('product-rating').value) || 0,
+                reviews: parseInt(document.getElementById('product-reviews').value) || 0,
+                image: document.getElementById('product-image').value,
+                size: document.getElementById('product-size').value,
+                effects: document.getElementById('product-effects').value.split(',').map(e => e.trim()).filter(e => e),
+                terpenes: document.getElementById('product-terpenes').value.split(',').map(t => t.trim()).filter(t => t)
+            };
+            
+            const productId = document.getElementById('product-id').value;
+            
+            if (productId) {
+                // Edit existing product
+                const index = products.findIndex(p => p.id === parseInt(productId));
+                if (index !== -1) {
+                    products[index] = { ...products[index], ...product };
+                }
+            } else {
+                // Add new product
+                products.push(product);
+            }
+            
+            saveProducts();
+            resetForm();
+            loadProducts();
+            loadDashboard();
+            
+            // Switch to products view
+            document.querySelector('[data-section="products"]').click();
+        });
+
+        function editProduct(index) {
+            const product = products[index];
+            
+            document.getElementById('product-id').value = product.id;
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-description').value = product.description;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-thca').value = product.thca || '';
+            document.getElementById('product-strain').value = product.strain || '';
+            document.getElementById('product-rating').value = product.rating || '';
+            document.getElementById('product-reviews').value = product.reviews || '';
+            document.getElementById('product-image').value = product.image;
+            document.getElementById('product-size').value = product.size || '';
+            document.getElementById('product-effects').value = (product.effects || []).join(', ');
+            document.getElementById('product-terpenes').value = (product.terpenes || []).join(', ');
+            
+            document.getElementById('form-title').textContent = 'Edit Product';
+            document.getElementById('save-btn').textContent = 'Update Product';
+            document.getElementById('cancel-btn').style.display = 'inline-block';
+            document.getElementById('delete-btn').style.display = 'inline-block';
+            
+            // Switch to add/edit form
+            document.querySelector('[data-section="add-product"]').click();
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                products.splice(index, 1);
+                saveProducts();
+                loadProducts();
+                loadDashboard();
+            }
+        }
+
+        function resetForm() {
+            productForm.reset();
+            document.getElementById('product-id').value = '';
+            document.getElementById('form-title').textContent = 'Add New Product';
+            document.getElementById('save-btn').textContent = 'Add Product';
+            document.getElementById('cancel-btn').style.display = 'none';
+            document.getElementById('delete-btn').style.display = 'none';
+        }
+
+        // Dashboard
+        function loadDashboard() {
+            const totalProducts = products.length;
+            const totalSales = sales.length;
+            const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
+            const activeCarts = Object.keys(localStorage).filter(key => key.startsWith('thcaCart')).length;
+
+            document.getElementById('total-products').textContent = totalProducts;
+            document.getElementById('total-sales').textContent = totalSales;
+            document.getElementById('total-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            document.getElementById('active-carts').textContent = activeCarts;
+        }
+
+        // Sales
+        function loadSales() {
+            const salesContent = document.getElementById('sales-content');
+            
+            if (sales.length === 0) {
+                salesContent.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No sales data available</h3>
+                        <p>Sales will appear here when customers make purchases</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            salesContent.innerHTML = `
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sales.map(sale => `
+                            <tr>
+                                <td>#${sale.id}</td>
+                                <td>${new Date(sale.date).toLocaleDateString()}</td>
+                                <td>${sale.items.length} items</td>
+                                <td>$${sale.total.toFixed(2)}</td>
+                                <td><span style="color: var(--admin-primary);">✓ Completed</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Settings
+        function saveSettings() {
+            settings.storeName = document.getElementById('store-name').value;
+            settings.storeEmail = document.getElementById('store-email').value;
+            settings.currency = document.getElementById('store-currency').value;
+            
+            localStorage.setItem('thcaSettings', JSON.stringify(settings));
+            alert('Settings saved successfully!');
+        }
+
+        function resetSettings() {
+            if (confirm('Reset all settings to default?')) {
+                settings = {
+                    storeName: 'THCA Store',
+                    storeEmail: 'admin@thcastore.com',
+                    currency: 'USD'
+                };
+                
+                document.getElementById('store-name').value = settings.storeName;
+                document.getElementById('store-email').value = settings.storeEmail;
+                document.getElementById('store-currency').value = settings.currency;
+                
+                localStorage.setItem('thcaSettings', JSON.stringify(settings));
+                alert('Settings reset to default!');
+            }
+        }
+
+        // Storage functions
+        function saveProducts() {
+            localStorage.setItem('thcaProducts', JSON.stringify(products));
+            // Sync with main site
+            localStorage.setItem('productsUpdated', Date.now());
+        }
+
+        // Event listeners
+        document.getElementById('cancel-btn').addEventListener('click', resetForm);
+        document.getElementById('delete-btn').addEventListener('click', () => {
+            const productId = document.getElementById('product-id').value;
+            if (productId) {
+                const index = products.findIndex(p => p.id === parseInt(productId));
+                if (index !== -1) {
+                    deleteProduct(index);
+                }
+            }
+        });
+
+        productSearch.addEventListener('input', loadProducts);
+
+        // Initialize
+        document.getElementById('store-name').value = settings.storeName;
+        document.getElementById('store-email').value = settings.storeEmail;
+        document.getElementById('store-currency').value = settings.currency;
+
+        loadDashboard();
+        loadProducts();
+        loadSales();
+    </script>
+</body>
+</html>
