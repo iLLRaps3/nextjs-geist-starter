@@ -1,0 +1,59 @@
+t<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>THCA Store</title>
+    <link rel="stylesheet" href="enhanced-styles.css" />
+</head>
+<body>
+    <header>
+        <h1>THCA Store</h1>
+        <nav>
+            <ul>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#cart">Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="filters" style="text-align:center; margin-bottom: 20px;">
+            <input type="text" id="search-input" placeholder="Search products..." style="padding: 10px; width: 300px; border-radius: 25px; border: none; box-shadow: 0 0 10px #00ff88;">
+            <select id="sort-select" style="padding: 10px; border-radius: 25px; border: none; margin-left: 10px; box-shadow: 0 0 10px #00ff88;">
+                <option value="name">Sort by Name</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Rating</option>
+                <option value="thca">THCA %</option>
+            </select>
+            <div id="filter-btns" style="margin-top: 15px;"></div>
+        </section>
+
+        <section id="products">
+            <h2>Our Products</h2>
+            <div class="product-list" id="product-list">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <section id="cart">
+            <h2>Your Cart</h2>
+            <div id="cart-items">
+                <p>Your cart is empty.</p>
+            </div>
+            <div id="cart-total-container" style="display:none;">
+                <strong>Total: $<span id="cart-total">0.00</span></strong>
+            </div>
+            <button id="checkout-btn" style="display:none;">Checkout</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 THCA Store. All rights reserved.</p>
+        <p><a href="admin-link.html" style="color: #00ff88; text-decoration: none;">Admin Panel</a></p>
+    </footer>
+
+    <script src="enhanced-script.js"></script>
+</body>
+</html>
